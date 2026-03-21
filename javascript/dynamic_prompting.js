@@ -211,10 +211,12 @@ class SDDP_UI {
       "#sddp-wildcard-file-editor textarea",
     );
     const name = gradioApp().querySelector("#sddp-wildcard-file-name textarea");
-    const { contents, wrapped_name: wrappedName } = message;
+    const saveButton = gradioApp().querySelector("#sddp-wildcard-save-button");
+    const { contents, wrapped_name: wrappedName, can_edit: canEdit } = message;
     editor.value = contents;
     name.value = wrappedName;
-    editor.readOnly = true;
+    editor.readOnly = !canEdit;
+    saveButton.disabled = !canEdit;
 
     window.updateInput?.(editor);
     window.updateInput?.(name);
@@ -242,6 +244,18 @@ class SDDP_UI {
         ?.addEventListener("input", debouncedSearch);
       this.searchKeyConfigured = true;
     }
+  }
+
+  onSaveFileClick() {
+    const json = JSON.parse(this.getInboxMessageText());
+    const contents = gradioApp().querySelector(
+      "#sddp-wildcard-file-editor textarea",
+    ).value;
+    return this.formatPayload({
+      action: "save wildcard",
+      wildcard: json,
+      contents,
+    });
   }
 
   filterTreeContent = (content, filter) => {

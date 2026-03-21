@@ -52,9 +52,9 @@ def on_ui_tabs():
     <ol>
         <li>Place your wildcard .txt files in the <code>{wildcard_manager.path}</code> folder.</li>
         <li>Each .txt file should contain one option per line.</li>
+        <li>Click on the files that appear in the tree to edit them.</li>
         <li>Use wildcards in your prompt with <code>__filename__</code> syntax (without the .txt extension).</li>
         <li>Subfolders are supported: <code>__subfolder/filename__</code></li>
-        <li>Click a file in the tree to preview its contents.</li>
     </ol>
     """
 
@@ -84,8 +84,13 @@ def on_ui_tabs():
                     "",
                     elem_id=make_element_id("wildcard-file-editor"),
                     lines=10,
-                    interactive=False,
-                    label="File preview (read-only)",
+                    interactive=True,
+                    label="File editor",
+                )
+                save_button = gr.Button(
+                    "Save wildcards",
+                    scale=1,
+                    elem_id=make_element_id("wildcard-save-button"),
                 )
 
         # Hidden scratch textboxes and button for communication with JS bits.
@@ -115,6 +120,13 @@ def on_ui_tabs():
         refresh_wildcards_button.click(
             refresh_wildcards_callback,
             inputs=[],
+            outputs=[server_to_client_message_textbox],
+        )
+
+        save_button.click(
+            save_file_callback,
+            _js="SDDP.onSaveFileClick",
+            inputs=[client_to_server_message_textbox],
             outputs=[server_to_client_message_textbox],
         )
 
@@ -164,15 +176,31 @@ def handle_load_wildcard(event: dict) -> str:
     wf = wildcard_manager.get_file(name)
     if isinstance(wf, WildcardTextFile):
         contents = wf.read_text()
+        can_edit = True
     else:
         values = "\n".join(str(val) for val in wf.get_values())
-        contents = f"# File preview\n{values}"
+        contents = f"# File can't be edited\n{values}"
+        can_edit = False
 
     return create_payload(
         action=LOAD_FILE_ACTION,
         success=True,
         contents=contents,
-        can_edit=False,
+        can_edit=can_edit,
         name=name,
         wrapped_name=wildcard_manager.to_wildcard(name),
     )
+
+
+def save_file_callback(event_str: str):
+    try:
+        event = json.loads(event_str)
+        wf = wildcard_manager.get_file(event["wildcard"]["name"])
+        if isinstance(wf, WildcardTextFile):
+            wf.write_text(event["contents"].strip())
+        else:
+            raise Exception("Can't save non-text files")
+        wildcard_manager.clear_cache()
+        return handle_load_wildcard({"name": event["wildcard"]["name"]})
+    except Exception as e:
+        logger.exception(e)

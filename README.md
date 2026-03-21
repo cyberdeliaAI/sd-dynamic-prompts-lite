@@ -8,33 +8,32 @@ A lightweight fork of [sd-dynamic-prompts](https://github.com/adieyal/sd-dynamic
 
 ## What's included
 
-| Feature                   | Description                                                  |
-| ------------------------- | ------------------------------------------------------------ |
-| **Wildcard files**        | Place `.txt` files in the `wildcards/` folder, use `__filename__` in your prompt |
-| **Variant syntax**        | `{red\|green\|blue}` picks one randomly                      |
-| **Weighted variants**     | `{0.5::red\|0.3::green\|0.2::blue}`                          |
-| **Multi-select**          | `{2$$red\|green\|blue}` picks two                            |
-| **Range select**          | `{1-3$$red\|green\|blue}` picks between 1 and 3              |
-| **Combinatorial mode**    | Generate all possible prompt combinations                    |
-| **Wildcards Manager tab** | Browse and preview your wildcard files (read-only)           |
-| **Nested wildcards**      | Subfolders supported: `__animals/cats__`                     |
-| **Variables**             | `${color=red}` and `${color}` for reusable snippets          |
-| **Configurable syntax**   | Change variant brackets and wildcard wrapping in Settings    |
+| Feature | Description |
+|---------|-------------|
+| **Wildcard files** | Place `.txt` files in the `wildcards/` folder, use `__filename__` in your prompt |
+| **Variant syntax** | `{red\|green\|blue}` picks one randomly |
+| **Weighted variants** | `{0.5::red\|0.3::green\|0.2::blue}` |
+| **Multi-select** | `{2$$red\|green\|blue}` picks two |
+| **Range select** | `{1-3$$red\|green\|blue}` picks between 1 and 3 |
+| **Combinatorial mode** | Generate all possible prompt combinations |
+| **Wildcards Manager tab** | Browse, edit, and save your wildcard files |
+| **Nested wildcards** | Subfolders supported: `__animals/cats__` |
+| **Variables** | `${color=red}` and `${color}` for reusable snippets |
+| **Configurable syntax** | Change variant brackets and wildcard wrapping in Settings |
 
 ## What's removed
 
 Compared to the full [sd-dynamic-prompts](https://github.com/adieyal/sd-dynamic-prompts):
 
-| Removed                                       | Why                                                          |
-| --------------------------------------------- | ------------------------------------------------------------ |
-| **Magic Prompt**                              | Requires downloading large AI models (300MB–1.4GB), uses VRAM |
-| **I'm Feeling Lucky**                         | Network calls to lexica.art                                  |
-| **Attention Grabber**                         | Rarely used, adds complexity                                 |
-| **Jinja2 templates**                          | Too advanced for most users, adds dependency weight          |
-| **Wildcard editing in UI**                    | Manage your files on disk — simpler and safer                |
-| **Collection copy/download**                  | No bundled 28MB wildcard library — bring your own            |
-| **`send2trash` dependency**                   | Only needed for UI delete, which is removed                  |
-| **`magicprompt` + `attentiongrabber` extras** | Heavy optional dependencies eliminated                       |
+| Removed | Why |
+|---------|-----|
+| **Magic Prompt** | Requires downloading large AI models (300MB–1.4GB), uses VRAM |
+| **I'm Feeling Lucky** | Network calls to lexica.art |
+| **Attention Grabber** | Rarely used, adds complexity |
+| **Jinja2 templates** | Too advanced for most users, adds dependency weight |
+| **Collection copy/download** | No bundled 28MB wildcard library — bring your own |
+| **`send2trash` dependency** | Only needed for UI delete, which is removed |
+| **`magicprompt` + `attentiongrabber` extras** | Heavy optional dependencies eliminated |
 
 **Result:** ~29 MB → ~78 KB. One Python dependency (`dynamicprompts`) instead of three.
 
@@ -72,7 +71,6 @@ wildcards/
 ```
 
 **Example `animals.txt`:**
-
 ```
 cat
 dog
@@ -107,17 +105,17 @@ a __styles/painting__ of {1-3$$flowers|trees|mountains|rivers} in a {warm|cool|d
 
 ## Syntax Reference
 
-| Syntax                     | Description      | Example                            |
-| -------------------------- | ---------------- | ---------------------------------- |
-| `{A\|B\|C}`                | Random choice    | `{red\|blue}` → `red`              |
-| `{2$$A\|B\|C}`             | Pick N           | `{2$$r\|g\|b}` → `r, g`            |
-| `{1-3$$A\|B\|C}`           | Pick N in range  | `{1-3$$r\|g\|b}` → `r, b`          |
-| `{2$$ and $$A\|B\|C}`      | Custom separator | → `r and b`                        |
-| `{0.5::A\|0.3::B\|0.2::C}` | Weighted         | A picked 50% of the time           |
-| `__name__`                 | Wildcard file    | random line from `name.txt`        |
-| `__folder/name__`          | Nested wildcard  | random line from `folder/name.txt` |
-| `${var=value}`             | Set variable     | `${gem={ruby\|emerald}}`           |
-| `${var}`                   | Use variable     | reuses the same pick               |
+| Syntax | Description | Example |
+|--------|-------------|---------|
+| `{A\|B\|C}` | Random choice | `{red\|blue}` → `red` |
+| `{2$$A\|B\|C}` | Pick N | `{2$$r\|g\|b}` → `r, g` |
+| `{1-3$$A\|B\|C}` | Pick N in range | `{1-3$$r\|g\|b}` → `r, b` |
+| `{2$$ and $$A\|B\|C}` | Custom separator | → `r and b` |
+| `{0.5::A\|0.3::B\|0.2::C}` | Weighted | A picked 50% of the time |
+| `__name__` | Wildcard file | random line from `name.txt` |
+| `__folder/name__` | Nested wildcard | random line from `folder/name.txt` |
+| `${var=value}` | Set variable | `${gem={ruby\|emerald}}` |
+| `${var}` | Use variable | reuses the same pick |
 
 For the full syntax specification, see the [Dynamic Prompts documentation](https://github.com/adieyal/sd-dynamic-prompts/blob/main/docs/SYNTAX.md).
 
